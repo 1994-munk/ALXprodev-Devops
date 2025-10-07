@@ -2,18 +2,30 @@
 # Script to summarize Pokémon data and calculate averages
 
 output_file="pokemon_report.csv"
+data_dir="pokemon_data"
+
+# Check if the directory exists
+if [ ! -d "$data_dir" ]; then
+  echo "Error: $data_dir directory not found!"
+  exit 1
+fi
+
+# Create CSV header
 echo "Name,Height (m),Weight (kg)" > "$output_file"
 
 # Loop through all JSON files
-for file in pokemon_data/*.json; do
-  name=$(jq -r '.name' "$file" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
-  height=$(jq '.height' "$file" | awk '{printf "%.2f", $1/10}')
-  weight=$(jq '.weight' "$file" | awk '{printf "%.1f", $1/10}')
+for file in "$data_dir"/*.json; do
+  # Extract values using grep/sed
+  name=$(grep '"name"' "$file" | head -1 | sed 's/.*"name": "\(.*\)".*/\1/')
+  height=$(grep '"height"' "$file" | sed 's/.*"height": \([0-9.]*\).*/\1/')
+  weight=$(grep '"weight"' "$file" | sed 's/.*"weight": \([0-9.]*\).*/\1/')
+  
   echo "$name,$height,$weight" >> "$output_file"
 done
 
-echo -e "\nCSV Report generated at: $output_file\n"
-cat "$output_file"
+# Display success message
+echo "CSV Report generated at: $output_file"
+echo
 
 # Calculate averages using awk
 awk -F',' 'NR>1 { total_h+=$2; total_w+=$3; count++ }
