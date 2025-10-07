@@ -3,7 +3,7 @@
 
 name=$(jq -r '.name' pikachu.json | sed 's/.*/\u&/')
 type=$(jq -r '.types[0].type.name' pikachu.json | sed 's/.*/\u&/')
-height=$(jq -r '.height' pikachu.json | awk '{printf "%.1f", $1/10}')
-weight=$(jq -r '.weight' pikachu.json | awk '{printf "%.1f", $1/10}')
+formatted_height=$(jq -r '.height' pikachu.json | awk '{printf "%.1f", $1/10}')
+formatted_weight=$(jq -r '.weight' pikachu.json | awk '{printf "%.1f", $1/10}')
 
-echo "$name is of type $type, weighs ${weight}kg, and is ${height}m tall."
+echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall."
