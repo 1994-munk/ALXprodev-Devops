@@ -1,0 +1,26 @@
+#!/bin/bash
+# Fetch Pokémon data in parallel and wait for all to complete
+
+POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+OUTPUT_DIR="pokemon_data_parallel"
+
+# Create directory if it doesn't exist
+mkdir -p "$OUTPUT_DIR"
+
+# Loop through each Pokémon and fetch data in the background
+for POKEMON in "${POKEMONS[@]}"
+do
+    {
+        echo "Fetching data for $POKEMON..."
+        RESPONSE=$(curl -s -w "%{http_code}" -o "$OUTPUT_DIR/$POKEMON.json" "https://pokeapi.co/api/v2/pokemon/$POKEMON")
+        if [ "$RESPONSE" -eq 200 ]; then
+            echo "Saved data to $OUTPUT_DIR/$POKEMON.json ✅"
+        else
+            echo "Failed to fetch $POKEMON ❌ (Status: $RESPONSE)"
+        fi
+    } &
+done
+
+# Wait for all background processes to finish
+wait
+echo "🎉 All Pokémon data fetched successfully!"
