@@ -1,0 +1,16 @@
+#!/bin/bash
+# Script to fetch multiple Pokémon data and save each as a JSON file
+
+mkdir -p pokemon_data
+
+for pokemon in bulbasaur ivysaur venusaur charmander charmeleon
+do
+  echo "Fetching data for $pokemon..."
+  response=$(curl -s -w "%{http_code}" -o "pokemon_data/${pokemon}.json" "https://pokeapi.co/api/v2/pokemon/${pokemon}")
+  if [ "$response" -eq 200 ]; then
+    echo "Saved data to pokemon_data/${pokemon}.json ✅"
+  else
+    echo "Failed to fetch data for $pokemon ❌"
+  fi
+  sleep 2
+done
