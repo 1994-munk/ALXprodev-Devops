@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fetch Pokémon data in parallel and wait for all to complete
+# Fetch Pokémon data in parallel using background processes and manage them with jobs
 
 POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 OUTPUT_DIR="pokemon_data_parallel"
@@ -7,7 +7,7 @@ OUTPUT_DIR="pokemon_data_parallel"
 # Create directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
 
-# Loop through each Pokémon and fetch data in the background
+# Loop through Pokémon and fetch in background
 for POKEMON in "${POKEMONS[@]}"
 do
     {
@@ -21,6 +21,15 @@ do
     } &
 done
 
-# Wait for all background processes to finish
+# List all background jobs
+echo "Current background jobs:"
+jobs
+
+# Wait for all background jobs to complete
 wait
+
+# Confirm everything finished
 echo "🎉 All Pokémon data fetched successfully!"
+
+# Optional cleanup - kill any leftover background processes just in case
+kill $(jobs -p) 2>/dev/null
