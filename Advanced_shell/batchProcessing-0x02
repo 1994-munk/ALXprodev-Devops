@@ -3,14 +3,43 @@
 
 mkdir -p pokemon_data
 
-for pokemon in bulbasaur ivysaur venusaur charmander charmeleon
+#!/bin/bash
+
+# Directory for storing Pokémon data
+mkdir -p pokemon_data
+
+# Pokémon list
+pokemon_list=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+# Loop through each Pokémon
+for pokemon in "${pokemon_list[@]}"
 do
   echo "Fetching data for $pokemon..."
-  response=$(curl -s -w "%{http_code}" -o "pokemon_data/${pokemon}.json" "https://pokeapi.co/api/v2/pokemon/${pokemon}")
-  if [ "$response" -eq 200 ]; then
-    echo "Saved data to pokemon_data/${pokemon}.json ✅"
+  attempt=1
+  success=false
+
+  # Retry up to 3 times
+  while [ $attempt -le 3 ]; do
+    response=$(curl -s -o "pokemon_data/${pokemon}.json" -w "%{http_code}" "https://pokeapi.co/api/v2/pokemon/$pokemon")
+    if [ "$response" -eq 200 ]; then
+      echo "✅ Successfully fetched $pokemon (Attempt $attempt)"
+      success=true
+      break
+    else
+      echo "⚠️ Attempt $attempt failed for $pokemon (Status: $response). Retrying..."
+      ((attempt++))
+      sleep 2
+    fi
+  done
+
+  # If still failed after 3 tries
+  if [ "$success" = false ]; then
+    echo "❌ Failed to fetch $pokemon after 3 attempts. Skipping..."
   else
-    echo "Failed to fetch data for $pokemon ❌"
+    echo "Saved data to pokemon_data/${pokemon}.json ✅"
   fi
-  sleep 2
+
+  sleep 1
 done
+
+echo "✅ Batch processing completed!"
