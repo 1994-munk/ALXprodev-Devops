@@ -15,5 +15,9 @@ done
 echo -e "\nCSV Report generated at: $output_file\n"
 cat "$output_file"
 
-# Calculate averages
-awk -F',' 'NR>1 {h+=$2; w+=$3; count++} END {printf "\nAverage Height: %.2f m\nAverage Weight: %.2f kg\n", h/count, w/count}' "$output_file"
+# Calculate averages using awk
+awk -F',' 'NR>1 { total_h+=$2; total_w+=$3; count++ }
+END {
+  printf "Average Height: %.2f m\n", total_h/count
+  printf "Average Weight: %.2f kg\n", total_w/count
+}' "$output_file"
