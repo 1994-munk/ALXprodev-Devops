@@ -2,5 +2,4 @@
 # Script: apiAutomation-0x00
 # Purpose: Fetch data for Pikachu from the Pokémon API and save it to data.json
 
-url="https://pokeapi.co/api/v2/pokemon/pikachu"
-curl -s -o data.json "$url" || echo "Error fetching data" >> errors.txt
+curl -s https://pokeapi.co/api/v2/pokemon/pikachu -o pikachu.json || echo "Failed to fetch data" >> errors.txt

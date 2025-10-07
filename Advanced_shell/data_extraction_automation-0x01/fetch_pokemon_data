@@ -1,5 +1,0 @@
-#!/bin/bash
-# Fetch Pokémon data from the PokéAPI and save it as JSON
-
-curl -s "https://pokeapi.co/api/v2/pokemon/pikachu" | jq '.' > pikachu.json
-
